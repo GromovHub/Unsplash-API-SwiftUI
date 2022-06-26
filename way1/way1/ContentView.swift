@@ -10,7 +10,10 @@ import UnsplashSwiftUI
 
 struct ContentView: View {
     var body: some View {
-        UnsplashRandom(clientId: "1_RusPERzdidJ_akL0iHjgf03x1ivIjhp7algRGIPzM")
+        VStack {
+            UnsplashRandom(clientId: "1_RusPERzdidJ_akL0iHjgf03x1ivIjhp7algRGIPzM")
+            UnsplashRandom(clientId: "1_RusPERzdidJ_akL0iHjgf03x1ivIjhp7algRGIPzM")
+        }
     }
 }
 
