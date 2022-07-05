@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D08298DA2874988A00391F71 /* UnsplashSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = D08298D92874988A00391F71 /* UnsplashSwiftUI */; };
 		D0EEE9412868E38100660CD8 /* way1App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EEE9402868E38100660CD8 /* way1App.swift */; };
 		D0EEE9432868E38100660CD8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EEE9422868E38100660CD8 /* ContentView.swift */; };
 		D0EEE9452868E38200660CD8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0EEE9442868E38200660CD8 /* Assets.xcassets */; };
@@ -27,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D08298DA2874988A00391F71 /* UnsplashSwiftUI in Frameworks */,
 				D0EEE9502868E3CB00660CD8 /* UnsplashSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,6 +89,7 @@
 			name = way1;
 			packageProductDependencies = (
 				D0EEE94F2868E3CB00660CD8 /* UnsplashSwiftUI */,
+				D08298D92874988A00391F71 /* UnsplashSwiftUI */,
 			);
 			productName = way1;
 			productReference = D0EEE93D2868E38100660CD8 /* way1.app */;
@@ -118,6 +121,7 @@
 			mainGroup = D0EEE9342868E38100660CD8;
 			packageReferences = (
 				D0EEE94E2868E3CB00660CD8 /* XCRemoteSwiftPackageReference "UnsplashSwiftUI" */,
+				D08298D82874988A00391F71 /* XCRemoteSwiftPackageReference "UnsplashSwiftUI" */,
 			);
 			productRefGroup = D0EEE93E2868E38100660CD8 /* Products */;
 			projectDirPath = "";
@@ -349,6 +353,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D08298D82874988A00391F71 /* XCRemoteSwiftPackageReference "UnsplashSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ArnavMotwani/UnsplashSwiftUI";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		D0EEE94E2868E3CB00660CD8 /* XCRemoteSwiftPackageReference "UnsplashSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ArnavMotwani/UnsplashSwiftUI";
@@ -360,6 +372,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D08298D92874988A00391F71 /* UnsplashSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D08298D82874988A00391F71 /* XCRemoteSwiftPackageReference "UnsplashSwiftUI" */;
+			productName = UnsplashSwiftUI;
+		};
 		D0EEE94F2868E3CB00660CD8 /* UnsplashSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D0EEE94E2868E3CB00660CD8 /* XCRemoteSwiftPackageReference "UnsplashSwiftUI" */;
