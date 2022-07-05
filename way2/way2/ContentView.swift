@@ -8,24 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var logic = Logic()
-    @State var url = "click to random"
+    @State var url: String = UnsplashGet.unwrapper(UnsplashGet.getRandom())
     var body: some View {
         VStack {
             Text(url)
             Button("go") {
-                url = Logic.getDogUrl()
+                url = UnsplashGet.unwrapper(UnsplashGet.getRandom())
                 print("this is url ---> \(url)")
             }
+            .buttonStyle(.borderedProminent)
+            Spacer()
             AsyncImage(url: URL(string: url)) { image in
                 image.resizable()
-                    
+                    .scaledToFit()
             } placeholder: {
                 ProgressView()
             }
-            .frame(width: 300, height: 500)
+            Spacer(minLength: 10)
         }
-        
     }
 }
 
@@ -44,30 +44,7 @@ struct UnsplashURLs: Codable {
     let small: String
 }
 
-class Logic: ObservableObject{
-//    let url: String
-//    init() {
-//        self.url = Logic.getRandomImageUrl()
-//    }
-    
-    // https:\/\/i.imgflip.com\/30b1gx.jpg
-    
-    static func getRandomImageUrl() -> String {
-        var stringURL: String = "nothing"
-        URLSession(configuration: .default).dataTask(with: URL(string: "https://api.unsplash.com/photos/random/?client_id=1_RusPERzdidJ_akL0iHjgf03x1ivIjhp7algRGIPzM")!) { data, response, error in
-            print("MESSAGE FROM SESSION")
-            let decoding = try? JSONDecoder().decode(UnsplashResponseObject.self, from: data!)
-            
-            guard decoding?.urls.small != nil else {
-                stringURL = "https://images.unsplash.com/photo-1656513014654-420af5aa6896?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNDEyMDl8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NTcwNDExNTI&ixlib=rb-1.2.1&q=80&w=400"
-                return
-            }
-            print(decoding!.id, decoding!.urls.small)
-            stringURL = decoding!.urls.small
-        }.resume()
-        return stringURL
-    }
-    
+class Logic {
     static func getDogUrl() -> String {
         struct dogObj: Decodable {
             let fileSizeBytes: Int
@@ -79,5 +56,31 @@ class Logic: ObservableObject{
         }.resume()
         sleep(2)
         return toReturn
+    }
+}
+
+class UnsplashGet {
+    struct JSONObj: Codable {
+        let description: String
+        let urls: URLObj
+    }
+    struct URLObj: Codable {
+        let small: String
+    }
+    static let decoder = JSONDecoder()
+    static func getRandom() -> JSONObj? {
+        var result: JSONObj?
+           let mainURl = URL(string: "https://api.unsplash.com/photos/random/?client_id=1_RusPERzdidJ_akL0iHjgf03x1ivIjhp7algRGIPzM")
+            URLSession.shared.dataTask(with: mainURl!) { data, resp, error in
+               try? result = decoder.decode(JSONObj.self, from: data!)
+                print(String(decoding: data!, as: UTF8.self))
+            }
+            .resume()
+          sleep(2)
+            return result
+       
+    }
+    static func unwrapper(_ obj: JSONObj?) -> String {
+        obj?.urls.small ?? "fail"
     }
 }
