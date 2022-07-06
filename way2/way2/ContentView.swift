@@ -8,23 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State var url: String = UnsplashGet.unwrapper(UnsplashGet.getRandom())
+    @ObservedObject var controller = SearchObject.shared
     var body: some View {
         VStack {
-            Text(url)
+            Text(controller.getDesc())
             Button("go") {
-                url = UnsplashGet.unwrapper(UnsplashGet.getRandom())
-                print("this is url ---> \(url)")
+                controller.search()
             }
             .buttonStyle(.borderedProminent)
+            AsyncImage(url: URL(string: controller.getLink()), scale: 2)
             Spacer()
-            AsyncImage(url: URL(string: url)) { image in
-                image.resizable()
-                    .scaledToFit()
-            } placeholder: {
-                ProgressView()
-            }
-            Spacer(minLength: 10)
+            
         }
     }
 }
@@ -35,52 +29,59 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-struct UnsplashResponseObject: Codable {
-    let id: String
-    let description: String
-    let urls: UnsplashURLs
-}
-struct UnsplashURLs: Codable {
-    let small: String
-}
+class SearchObject: ObservableObject {
+    static let shared = SearchObject()
+    private init(){}
 
-class Logic {
-    static func getDogUrl() -> String {
-        struct dogObj: Decodable {
-            let fileSizeBytes: Int
-            let url: String
+    struct Results: Codable {
+        var total: Int
+        var results: [Result]
+    }
+    struct Result: Codable {
+        var id: String
+        var description: String?
+        var urls: URLs
+    }
+    struct URLs: Codable {
+        var small: String
+    }
+
+
+    @Published var results = [Result]()
+    let token = "1_RusPERzdidJ_akL0iHjgf03x1ivIjhp7algRGIPzM"
+    @Published var query = "cats"
+
+                
+                func search() {
+                    let url = URL(string: "https://api.unsplash.com/search/photos?page=1&query=\(query)")
+                    var request = URLRequest(url: url!)
+                    request.httpMethod = "GET"
+                    request.setValue("Client-ID \(token)", forHTTPHeaderField: "Authorization")
+                    let task = URLSession.shared.dataTask(with: request) { data, res, error in
+                        guard let data = data else {
+                            return
+                        }
+                        do {
+                            let res = try JSONDecoder().decode(Results.self, from: data)
+                            self.results.append(contentsOf: res.results)
+                        } catch {
+                            print(error)
+                        }
+                    }
+                    task.resume()
+                }
+    func getLink() -> String {
+        var result: String = "empty"
+        for i in self.results {
+            result = i.urls.small
         }
-        var toReturn: String = ""
-        URLSession.shared.dataTask(with: URL(string: "https://random.dog/woof.json")!) { data, response, error in
-            toReturn = (try? JSONDecoder().decode(dogObj.self, from: data!))!.url
-        }.resume()
-        sleep(2)
-        return toReturn
+        return result
+                }
+    func getDesc() -> String {
+        var result: String = "empty"
+        for i in self.results {
+            result = i.description ?? "no description"
+        }
+        return result
     }
-}
-
-class UnsplashGet {
-    struct JSONObj: Codable {
-        let description: String
-        let urls: URLObj
-    }
-    struct URLObj: Codable {
-        let small: String
-    }
-    static let decoder = JSONDecoder()
-    static func getRandom() -> JSONObj? {
-        var result: JSONObj?
-           let mainURl = URL(string: "https://api.unsplash.com/photos/random/?client_id=1_RusPERzdidJ_akL0iHjgf03x1ivIjhp7algRGIPzM")
-            URLSession.shared.dataTask(with: mainURl!) { data, resp, error in
-               try? result = decoder.decode(JSONObj.self, from: data!)
-                print(String(decoding: data!, as: UTF8.self))
             }
-            .resume()
-          sleep(2)
-            return result
-       
-    }
-    static func unwrapper(_ obj: JSONObj?) -> String {
-        obj?.urls.small ?? "fail"
-    }
-}
